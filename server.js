@@ -28,21 +28,25 @@ app.post('/token-claims', (req, res) => {
             "AD/GA_MotorTransferencias_Consulta_TXN_NAC"
         ];
 
-        const claims = {
-            directory_groups: directory_groups,
-            customRole: 'Admin',
-            department: 'IT'
-        };
-
-        res.json({
+        // Aquí se estructura la respuesta según el formato que espera Entra ID
+        const response = {
             data: {
+                "@odata.type": "#microsoft.graph.tokenIssuanceStartResponseData", // Aseguramos que el tipo esté bien definido
                 actions: [
                     {
-                        claims
+                        "@odata.type": "#microsoft.graph.tokenIssuanceStart.provideClaimsForToken", // El tipo para el tipo de acción
+                        claims: {
+                            "groups": directory_groups, // Incluir los grupos dentro del claim
+                            "customRole": "Admin",
+                            "department": "IT"
+                        }
                     }
                 ]
             }
-        });
+        };
+
+        // Enviar la respuesta correctamente formateada
+        res.json(response);
     } catch (error) {
         console.error(error);  // Log de error para diagnóstico
         res.status(500).send('Internal Server Error');
